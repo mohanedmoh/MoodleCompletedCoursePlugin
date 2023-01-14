@@ -29,7 +29,6 @@ global $PAGE, $DB, $OUTPUT;
 $page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
 $id          = optional_param('id', 0, PARAM_INT);// Course ID.
 
-
 if (!is_siteadmin()) {
     print_error('accessdenied', 'admin');
 }
@@ -48,6 +47,7 @@ if ($userid) {
     echo '<h2>'.fullname($user).'</h2>';
     echo '<div class="datatable">';
     echo '<table >';
+
     echo '<tr><th>'.get_string('course').'</th><th>'.get_string('completionstatus','local_reportcompletion').'</th><th>'.get_string('timecompleted','local_reportcompletion').'</th></tr>';
 
     foreach ($courses as $course) {
@@ -61,6 +61,7 @@ if ($userid) {
 
     echo '</table>';
     echo '</div>';
+
 } else {
 
     $users = $DB->get_records('user');
@@ -74,3 +75,4 @@ if ($userid) {
     echo '<input type="submit" value="'.get_string('viewreport','local_reportcompletion').'">';
     echo '</form>';
 }
+
