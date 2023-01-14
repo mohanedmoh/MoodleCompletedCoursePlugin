@@ -22,12 +22,17 @@
  */
 require_once(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
-
+require_once($CFG->libdir . '/formslib.php');
 require_login();
 
 global $PAGE, $DB, $OUTPUT;
 $page        = optional_param('page', '0', PARAM_INT);     // Which page to show.
 $id          = optional_param('id', 0, PARAM_INT);// Course ID.
+
+
+    $context = context_system::instance();
+    $PAGE->set_context($context);
+
 
 if (!is_siteadmin()) {
     print_error('accessdenied', 'admin');
@@ -40,39 +45,41 @@ $userid = optional_param('userid', 0, PARAM_INT);
 $url = new moodle_url("/local/reportcompletion/index.php", $params);
 
 $PAGE->set_url($url);
+$output = $PAGE->get_renderer('report_log');
+echo $output->header();
 if ($userid) {
     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
     $courses = enrol_get_all_users_courses($userid);
 
     echo '<h2>'.fullname($user).'</h2>';
-    echo '<div class="datatable">';
-    echo '<table >';
-
-    echo '<tr><th>'.get_string('course').'</th><th>'.get_string('completionstatus','local_reportcompletion').'</th><th>'.get_string('timecompleted','local_reportcompletion').'</th></tr>';
-
+    $table = new html_table();
+    $table->head = array(get_string('course'), get_string('completionstatus', 'local_reportcompletion'), get_string('timecompleted', 'local_reportcompletion'));
+    $table->attributes = array('class' => 'table table-bordered');
+    $table->data = array();
     foreach ($courses as $course) {
         $completion = $DB->get_record('course_completions', array('userid' => $userid, 'course' => $course->id));
-        echo '<tr>';
-        echo '<td><a href="'.new moodle_url('/course/view.php', array('id' => $course->id)).'">'.$course->fullname.'</a></td>';
-        echo '<td>'.(($completion->timecompleted) ? get_string('complete','local_reportcompletion') : get_string('notcomplete','local_reportcompletion')).'</td>';
-        echo '<td>'.userdate($completion->timecompleted, get_string('datetimeformat','local_reportcompletion')).'</td>';
-        echo '</tr>';
+        $row = array();
+        $row[] = html_writer::link(new moodle_url('/course/view.php', array('id' => $course->id)), $course->fullname);
+        $row[] = ($completion->timecompleted) ? get_string('complete', 'local_reportcompletion') : get_string('notcomplete', 'local_reportcompletion');
+        $row[] = userdate($completion->timecompleted, get_string('datetimeformat', 'local_reportcompletion'));
+        $table->data[] = $row;
     }
-
-    echo '</table>';
-    echo '</div>';
-
+    echo html_writer::table($table);
 } else {
-
     $users = $DB->get_records('user');
     echo '<h2>'.get_string('selectuser','local_reportcompletion').'</h2>';
-    echo '<form>';
-    echo '<select name="userid">';
+    echo '<form method="post" action="index.php">';
+    echo '<div class="form-group">';
+    echo '<label for="userid">'.get_string('selectuser','local_reportcompletion').'</label>';
+    echo '<select class="form-control" name="userid" id="userid">';
     foreach ($users as $user) {
-        echo '<option value="'.$user->id.'">'.fullname($user).'</option>';
+    echo '<option value="'.$user->id.'">'.fullname($user).'</option>';
     }
     echo '</select>';
-    echo '<input type="submit" value="'.get_string('viewreport','local_reportcompletion').'">';
+    echo '</div>';
+    echo '<input class="btn btn-primary" type="submit" value="'.get_string('viewreport','local_reportcompletion').'">';
     echo '</form>';
-}
-
+    }
+    echo $OUTPUT->footer();
+    
+    
