@@ -23,24 +23,24 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- defined('MOODLE_INTERNAL') || die;
-
- function local_reportcompletion_extend_settings_navigation( $settingsnav, $context) {
-    global $CFG, $PAGE;
+function local_reportcompletion_extend_settings_navigation( $settingsnav, $context) {
+    global $CFG, $PAGE, $ADMIN;
     // Only let users with the appropriate capability see this settings item.
     if (!has_capability('moodle/backup:backupcourse', context_course::instance($PAGE->course->id))) {
         return;
     }
-        if (is_siteadmin() && $settingnode = $settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN)) {
-            $strname=get_string('reportcompletion', 'local_reportcompletion');
-            $url = new moodle_url('/local/reportcompletion/index.php');
-            $reportnode=navigation_node::create($strname, $url, navigation_node::NODETYPE_LEAF, 'local_reportcompletion', 'local_reportcompletion', new pix_icon('i/report', $strname));
-            if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
-               $reportnode->make_active();
-            }
-            $settingnode->add_node($reportnode);
+    if (is_siteadmin() && $settingnode = $settingsnav->find('root', navigation_node::TYPE_SITE_ADMIN)) {
+        $strname = get_string('reportcompletion', 'local_reportcompletion');
+        $url = new moodle_url('/local/reportcompletion/index.php');
+        $reportnode = navigation_node::create($strname, $url,
+        navigation_node::NODETYPE_LEAF, 'local_reportcompletion',
+        'local_reportcompletion',
+        new pix_icon('i/report', $strname));
+        if ($PAGE->url->compare($url, URL_MATCH_BASE)) {
+            $reportnode->make_active();
         }
+        $ADMIN->add('reports', new admin_externalpage('local_reportcompletion', $strname, $url));
+
+        $settingnode->add_node($reportnode);
     }
-    
-
-
+}

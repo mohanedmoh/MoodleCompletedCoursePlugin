@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2010022437;   // The (date) version of this plugin.
+$plugin->version  = 2010022439;   // The (date) version of this plugin.
 $plugin->requires = 2010021900;   // Requires this Moodle version.
 
 $plugin->component = 'local_reportcompletion';
