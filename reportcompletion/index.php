@@ -14,10 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 /**
- * Run the code checker from the web.
  *
- * @package    local_codechecker
- * @copyright  2011 The Open University
+ * @package    Reportcompletion
+ * @copyright  2023 Mohaned Hassan (mohaned.omran1@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once(__DIR__ . '/../../config.php');
